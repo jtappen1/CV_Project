@@ -1,22 +1,35 @@
-Steps: Detection Model Bounding box:
-    1. Collect images that I want to train off of
-    2.  Resize them to be the correct size
-    3. Hand Label these images to detect guitar necks 
+# Guitar Neck Detection Program
 
-    Initally just do my guitar, but then later extend to more types and different things 
+## Overview
+This project is a computer vision program designed to detect the neck of a guitar in real-time from video input or images. Using techniques such as object detection, the program is capable of identifying and drawing bounding boxes around the guitar neck, making it useful for applications such as automated tuning, guitar playing analysis, or general image recognition tasks.
 
-    start by 512 x 512
-    gimp to crop and resize them down
+##  Features
+Real-time detection of the guitar neck from a webcam feed.
+Support for static image processing.
+Bounding box drawing on detected areas.
+Model built using PyTorch with the SSD (Single Shot Multibox Detector) algorithm.
+Fine-tuning capabilities for custom datasets.
 
+## Requirements
+To run this project, you need the following dependencies:
 
-plan: 
-Mask R-CNN: Extends Faster R-CNN by adding a branch for predicting segmentation masks on each Region of Interest (RoI).
+> Python 3.x
+> PyTorch
+> OpenCV (for handling webcam input and displaying images)
+> Torchvision
+> NumPy
+You can install the required dependencies using the following command:
 
-Pros: High accuracy and widely used.
-Cons: Computationally intensive.
+```
+pip install -r requirements.txt
+```
 
-Data Collection: Collect images containing the objects you want to segment. Ensure that the dataset has multiple instances of the same class if you’re focusing on multi-instance segmentation.
+## How It Works
+1. The program processes the input (image or webcam feed) frame by frame.
+2. It applies the SSD model to predict the presence of the guitar neck within the frame.
+3. Bounding boxes are drawn around detected guitar necks.
+4. Results are displayed in real-time or saved as images (depending on the mode).
 
-Annotations: Use annotation tools like COCO Annotator, LabelMe, or VIA to create instance masks. Each object instance should have a unique mask.
+## Model Architecture
+This program utilizes a pre-trained SSD (Single Shot Multibox Detector) model, fine-tuned for detecting guitar necks. The model takes an input image and generates bounding boxes along with classification scores for the regions that contain the guitar neck.
 
-Dataset Format: Common formats include COCO and Pascal VOC. Ensure your dataset annotations are in the correct format for your chosen model.
