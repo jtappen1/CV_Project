@@ -2,15 +2,9 @@ import json
 import torch
 from PIL import Image
 
-# Define the path to your VIA JSON file and images directory
-via_json_path = '/guitar_annotations.json'
-images_dir = 'path_to_images/'
-
-# Load VIA annotations
-with open(via_json_path) as f:
-    via_data = json.load(f)
-
-def parse_via_annotations(via_data, images_dir):
+def parse_via_annotations(via_json_path, images_dir):
+    with open(via_json_path) as f:
+        via_data = json.load(f)
     dataset = []
     for image_id, image_data in via_data.items():
         image_path = images_dir + image_data['filename']

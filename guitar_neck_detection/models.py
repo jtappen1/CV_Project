@@ -1,14 +1,30 @@
 import torch
 import torchvision
 from torchvision.models.detection import ssd300_vgg16
+from torchvision.models.detection import SSD300_VGG16_Weights
+from torchvision.models.detection.ssd import SSDClassificationHead
+from torchvision.models.detection import _utils
 
-# Load the pre-trained SSD model
-model = ssd300_vgg16(pretrained=True)
+def create_model(num_classes=91, size=300):
+    # Load the Torchvision pretrained model.
+    model = ssd300_vgg16(
+        weights=SSD300_VGG16_Weights.COCO_V1
+    )
+    # Retrieve the list of input channels. 
+    in_channels = _utils.retrieve_out_channels(model.backbone, (size, size))
+    # List containing number of anchors based on aspect ratios.
+    num_anchors = model.anchor_generator.num_anchors_per_location()
+    # The classification head.
+    model.head.classification_head = SSDClassificationHead(
+        in_channels=in_channels,
+        num_anchors=num_anchors,
+        num_classes=num_classes,
+    )
+    # Image size for transforms.
+    model.transform.min_size = (size,)
+    model.transform.max_size = size
+    return model
 
-# Modify the model to classify only one class (guitar neck) + background
-num_classes = 4  # 1 class (guitar neck) + background
-in_channels = model.head.classification_head[0].in_channels
-num_anchors = model.head.classification_head[0].num_anchors
-
-# Replace the classification head
-model.head.classification_head[0] = torchvision.models.detection.ssd.SSDClassificationHead(in_channels, num_anchors, num_classes)
+if __name__ == '__main__':
+    model = create_model(4, 512)
+    print(model)
