@@ -1,0 +1,13 @@
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 1
+names: ['Fretboard']
+
+roboflow:
+  workspace: john-tappen-workspace
+  project: fret-detection
+  version: 2
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/john-tappen-workspace/fret-detection/dataset/2

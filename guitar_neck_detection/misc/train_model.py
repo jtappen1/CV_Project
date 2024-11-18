@@ -4,8 +4,8 @@ import torch.optim as optim
 import torch
 from torch.utils.data import DataLoader
 import torchvision.transforms as T
-from via_image_dataset import VIAImageDataset
-from parse_annotations import parse_via_annotations
+from guitar_neck_detection.misc.via_image_dataset import VIAImageDataset
+from guitar_neck_detection.misc.parse_annotations import parse_via_annotations
 import yaml
 from models import create_model
 from torchvision import transforms

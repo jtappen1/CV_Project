@@ -1,3 +1,11 @@
 *.jpg
 *.jpeg
 *.pth
+*.txt
+*.pt
+*.png
+*.csv
+*.cache
+*.pyc
+
+!requirements.txt

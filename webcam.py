@@ -1,7 +1,7 @@
 import cv2
 import mediapipe as mp
 
-from gesture_detection import is_peace_sign
+from guitar_neck_detection.misc.gesture_detection import is_peace_sign
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
 mp_hands = mp.solutions.hands

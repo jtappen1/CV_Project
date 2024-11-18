@@ -32,7 +32,7 @@ def run_webcam_inference(config):
         center_x, center_y = width // 2, height // 2
 
         # Define the size of the region to extract
-        region_size = 512
+        region_size = 640
         half_region = region_size // 2
 
         # Calculate the coordinates of the region
