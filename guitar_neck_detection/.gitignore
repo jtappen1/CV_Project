@@ -7,5 +7,6 @@
 *.csv
 *.cache
 *.pyc
+*.yaml
 
 !requirements.txt

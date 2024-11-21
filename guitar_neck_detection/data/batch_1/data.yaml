@@ -5,9 +5,6 @@ test: ../test/images
 nc: 1
 names: ['Fretboard']
 
-output_images_dir: /Users/jtappen/Projects/cv_project/guitar_neck_detection/output_images
-weights_path: 'guitar_neck_detection/weights/'
-
 roboflow:
   workspace: john-tappen-workspace
   project: fret-detection
