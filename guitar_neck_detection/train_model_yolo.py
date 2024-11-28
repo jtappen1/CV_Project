@@ -6,7 +6,7 @@ import yaml
 def main():
 
     model = YOLO('yolov8n.pt')
-    yaml_path = "/Users/jtappen/Projects/cv_project/guitar_neck_detection/data/image_dataset_4.0/data.yaml"
+    yaml_path = "/Users/jtappen/Projects/cv_project/guitar_neck_detection/data/image_dataset_5.0/data.yaml"
     
     print("Starting Training...")
 
@@ -17,6 +17,7 @@ def main():
         batch=3,  # Batch size (adjust based on your GPU memory)
         device='cpu',  # Use the GPU (0 is typically the first GPU)
         workers=4,  # Number of CPU workers for data loading
+        lr0=0.0001
     )
     print("Training finished!")
 
