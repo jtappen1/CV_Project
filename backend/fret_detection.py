@@ -2,20 +2,27 @@ import cv2
 from collections import defaultdict
 
 
-def draw_first_fret_boxes(guitar_notes, resized_frame, max_x_box, ratio, fret):
+def draw_first_fret_boxes(current_annotations, guitar_notes, resized_frame, max_x_box, ratio, fret):
     x_min, y_min, x_max, y_max = map(int, max_x_box)  # Convert to integers for drawing
-    # cv2.rectangle(resized_frame, (x_min, y_min), (x_max, y_max), (0, 0, 255), 4)  # Red outline
+    cv2.rectangle(resized_frame, (x_min, y_min), (x_max, y_max), (0, 0, 255), 4)  # Red outline
+    current_annotations.append({
+                    "x_min": x_min,
+                    "y_min": y_min,
+                    "x_max": x_max,
+                    "y_max" : y_max,
+                    "label": "fret_box"
+                })
     box_width = x_max - x_min
     three_fret_box_width = x_min + ratio*(box_width) - 15
 
     if(three_fret_box_width) < 640:
-        return draw_string_lines(guitar_notes,resized_frame, x_min, three_fret_box_width, y_min, y_max, fret, ratio)
+        return draw_string_lines(current_annotations, guitar_notes,resized_frame, x_min, three_fret_box_width, y_min, y_max, fret, ratio)
 
     
     return resized_frame
 
 
-def draw_string_lines(guitar_notes, resized_frame, x_min, x_max, y_min, y_max, fret, ratio):
+def draw_string_lines(current_annotations, guitar_notes, resized_frame, x_min, x_max, y_min, y_max, fret, ratio):
     padded_y_min = y_min + 10
     padded_y_max = y_max - 10
     padded_height = padded_y_max - padded_y_min  # Height after padding
@@ -23,11 +30,17 @@ def draw_string_lines(guitar_notes, resized_frame, x_min, x_max, y_min, y_max, f
 
     for i in range(6):
         line_y = padded_y_min + i * section_height
-        resized_frame = draw_notes_on_neck(guitar_notes, resized_frame, fret, ratio, line_y, x_min, x_max, i)
+        resized_frame = draw_notes_on_neck(current_annotations, guitar_notes, resized_frame, fret, ratio, line_y, x_min, x_max, i)
         cv2.line(resized_frame, 
                  (x_min, line_y), 
                  (x_max, line_y), 
-                 (255, 0, 0), 2)  # Blue line with thickness 2
+                 (0, 0, 0), 2)  # Blue line with thickness 2
+        current_annotations.append({
+                    "x_min": x_min,
+                    "line_y": line_y,
+                    "x_max": x_max,
+                    "label": "string"
+                })
        
         
     return resized_frame
@@ -60,7 +73,7 @@ def generate_pentatonic_notes(pentatonic_notes):
     return guitar_notes
     
 
-def draw_notes_on_neck(guitar_notes, resized_frame, fret, ratio, line_y, x_min, x_max, string_num):
+def draw_notes_on_neck(current_annotations, guitar_notes, resized_frame, fret, ratio, line_y, x_min, x_max, string_num):
     if fret >= 2:
         fret *= 2
     fret_width = (x_max - x_min) // ratio
@@ -69,6 +82,12 @@ def draw_notes_on_neck(guitar_notes, resized_frame, fret, ratio, line_y, x_min, 
         note = guitar_notes[string_num ][(fret + i)]
         if note != 0:
             cv2.circle(resized_frame,((x_max - (i * fret_width)- fret_width)+ (fret_width//2), line_y), 5 , (0, 255, 255), -1)
+            current_annotations.append({
+                    "x_min": (x_max - (i * fret_width)- fret_width)+ (fret_width//2),
+                    "line_y": line_y,
+                    "x_max": x_max,
+                    "label": "note"
+                })
 
     return resized_frame
         

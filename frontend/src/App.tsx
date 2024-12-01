@@ -8,6 +8,7 @@ const App: React.FC = () => {
   const [selectedScale, setSelectedScale] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
+  const [annotations, setSaveAnnotation] = useState<boolean>(true);
 
   useEffect(() => {
     const connectToBackend = async () => {
@@ -39,6 +40,20 @@ const App: React.FC = () => {
     } catch (err) {
       alert("Failed to update scale.");
       console.error("Error updating scale:", err);
+    }
+  };
+
+  const saveAnnotations = async () => {
+    try {
+      const response = await axios.post("http://localhost:4000/save_annotations", {
+        message: "Save the current annotations",
+      });
+      alert("Annotations saved successfully!");
+      setSaveAnnotation(!annotations)
+      
+    } catch (err) {
+      console.error("Error saving annotations:", err);
+      alert("Failed to save annotations.");
     }
   };
 
@@ -76,6 +91,8 @@ const App: React.FC = () => {
           ))}
         </select>
         <button onClick={updateScale}>Update Scale</button>
+        <button onClick={saveAnnotations}> {annotations ? "Save Annotations" : "Update Annotations"}
+        </button>
       </div>
     </div>
   );
