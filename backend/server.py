@@ -1,32 +1,30 @@
 import os
+from time import sleep
 from flask import Flask, render_template, Response, request, jsonify
 import cv2
 import threading
 from ultralytics import YOLO
 from collections import defaultdict
 from flask_cors import CORS
-from fret_detection import draw_first_fret_boxes, generate_pentatonic_notes
+from fret_detection import draw_first_fret_boxes, generate_fretboard_notes, get_scale_notes
 
 
 app = Flask(__name__)
 CORS(app)
 guitar_notes = defaultdict(lambda: defaultdict(int))
-current_scale = "F Minor Pentatonic"
+current_key = "F"
+current_scale_type = "Major"
 saved_annotations = False  # Global variable to hold the saved annotated frame
 current_annotations = []
+chromatic_scale = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
+current_scale_notes= get_scale_notes(current_key, chromatic_scale, current_scale_type)
 
-
-# Available scales
-scales = {
-    "F Minor Pentatonic": ['F', 'G#', 'A#', 'C', 'D#'],
-    "G Major Pentatonic": ['G', 'A', 'B', 'D', 'E'],
-    "C Major Pentatonic": ['C', 'D', 'E', 'G', 'A']
-}
+scale_types = ["Major", "Minor", "Minor Pentatonic", "Major Pentatonic"]
 
 # Webcam settings
 cap = cv2.VideoCapture(0)
 model = YOLO('/Users/jtappen/Projects/cv_project/guitar_neck_detection/runs/detect/train11/weights/last.pt')
-guitar_notes = generate_pentatonic_notes(scales[current_scale])
+guitar_notes = generate_fretboard_notes()
 
 def video_feed():
     global current_annotations, saved_annotations
@@ -99,9 +97,9 @@ def video_feed():
                 # cv2.putText(resized_frame, f"{idx + 1}", text_position, cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 2)
                 curr_box = odd_fret_boxes[idx]
                 if idx == 0 or idx== 4 or idx == 5:
-                    resized_frame = draw_first_fret_boxes(current_annotations, guitar_notes, resized_frame, curr_box, 3, idx + 1)
+                    resized_frame = draw_first_fret_boxes(current_scale_notes, current_annotations, guitar_notes, resized_frame, curr_box, 3, idx + 1)
                 else:
-                    resized_frame = draw_first_fret_boxes(current_annotations, guitar_notes, resized_frame, curr_box, 2, idx + 1)
+                    resized_frame = draw_first_fret_boxes(current_scale_notes, current_annotations, guitar_notes, resized_frame, curr_box, 2, idx + 1)
                 
             
         resized_frame = cv2.resize(resized_frame, (1920, 1080))
@@ -124,12 +122,14 @@ def video_feed_route():
 
 @app.route('/update_scale', methods=['POST'])
 def update_scale():
-    global current_scale, guitar_notes
-    scale_name = request.json.get("scale")
-    if scale_name in scales:
-        current_scale = scale_name
-        guitar_notes = generate_pentatonic_notes(scales[current_scale])
-        return jsonify({"message": f"Scale updated to {scale_name}"})
+    global current_key, guitar_notes, current_scale_notes, current_scale_type
+    scale_type = request.json.get("scale")
+    key = request.json.get("key")
+    if key in chromatic_scale:
+        current_key = key
+        current_scale_type = scale_type
+        current_scale_notes = get_scale_notes(key, chromatic_scale, scale_type)
+        return jsonify({"message": f"Scale updated to {(key + ' ' + scale_type)}"})
     else:
         return jsonify({"error": "Invalid scale"}), 400
 
@@ -140,15 +140,15 @@ def get_scales():
     """
     try:
         return jsonify({
-            "availableScales": list(scales.keys()),
-            "currentScale": current_scale
+            "availableScales": scale_types,
+            "currentScale": current_key
         }), 200
     except Exception as e:
         return jsonify({"error": "Failed to fetch scales", "details": str(e)}), 500
     
 @app.route('/')
 def index():
-    return render_template('index.html', scales=list(scales.keys()), current_scale=current_scale)
+    return render_template('index.html', scales=scale_types, scale_types=scale_types)
 
 @app.route('/save_annotations', methods=['POST'])
 def save_annotations():

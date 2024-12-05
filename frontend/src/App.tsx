@@ -5,7 +5,9 @@ import { ScaleResponse } from "./types";
 
 const App: React.FC = () => {
   const [scales, setScales] = useState<string[]>([]);
-  const [selectedScale, setSelectedScale] = useState<string>("");
+  const keys = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+  const [key, setKey] = useState<string>("F");
+  const [selectedScale, setSelectedScale] = useState<string>("major");
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
   const [annotations, setSaveAnnotation] = useState<boolean>(true);
@@ -16,8 +18,9 @@ const App: React.FC = () => {
         // Fetch available scales and the current scale
         const scaleResponse = await axios.get<ScaleResponse>("http://localhost:4000/scales");
         const { availableScales, currentScale } = scaleResponse.data;
-        setScales(availableScales);
-        setSelectedScale(currentScale);
+        setScales(availableScales)
+        setSelectedScale(availableScales[0])
+        setKey(currentScale);
       } catch (err) {
         setError("Failed to connect to the backend.");
         console.error("Backend connection error:", err);
@@ -33,9 +36,14 @@ const App: React.FC = () => {
     setSelectedScale(event.target.value);
   };
 
+  const handleKeyChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setKey(event.target.value);
+  };
+
   const updateScale = async () => {
     try {
-      const response = await axios.post("http://localhost:4000/update_scale", { scale: selectedScale });
+      console.log(selectedScale, key);
+      const response = await axios.post("http://localhost:4000/update_scale", { scale: selectedScale, key:key });
       alert(response.data.message || "Scale updated successfully!");
     } catch (err) {
       alert("Failed to update scale.");
@@ -78,6 +86,16 @@ const App: React.FC = () => {
         />
       {/* </div> */}
       <div className="controls">
+
+      <label htmlFor="key-select">Select Key:</label>
+        <select id="key-select" value={key} onChange={handleKeyChange}>
+          {keys.map((k) => (
+            <option key={k} value={k}>
+              {k}
+            </option>
+          ))}
+        </select>
+
         <label htmlFor="scale-select">Select Scale:</label>
         <select
           id="scale-select"
