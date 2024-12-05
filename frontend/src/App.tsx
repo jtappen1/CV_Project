@@ -48,7 +48,7 @@ const App: React.FC = () => {
       const response = await axios.post("http://localhost:4000/save_annotations", {
         message: "Save the current annotations",
       });
-      alert("Annotations saved successfully!");
+      alert(annotations ? "Annotations Saved Successfully!" : "Updated Annotations Successfully!");
       setSaveAnnotation(!annotations)
       
     } catch (err) {
@@ -68,7 +68,7 @@ const App: React.FC = () => {
   return (
     <div className="App">
       <h1>Guitar Neck Note Controller</h1>
-      <div className="video-container">
+      {/* <div className="video-container"> */}
         {/* Embed the video feed */}
         <img
           id="video-feed"
@@ -76,7 +76,7 @@ const App: React.FC = () => {
           alt="Video Stream"
           className="video-container"
         />
-      </div>
+      {/* </div> */}
       <div className="controls">
         <label htmlFor="scale-select">Select Scale:</label>
         <select
@@ -84,12 +84,13 @@ const App: React.FC = () => {
           value={selectedScale}
           onChange={handleScaleChange}
         >
-          {scales.map((scale) => (
-            <option key={scale} value={scale}>
+        {scales.map((scale) => (
+          <option key={scale} value={scale}>
               {scale}
             </option>
           ))}
         </select>
+        
         <button onClick={updateScale}>Update Scale</button>
         <button onClick={saveAnnotations}> {annotations ? "Save Annotations" : "Update Annotations"}
         </button>

@@ -4,7 +4,7 @@ from collections import defaultdict
 
 def draw_first_fret_boxes(current_annotations, guitar_notes, resized_frame, max_x_box, ratio, fret):
     x_min, y_min, x_max, y_max = map(int, max_x_box)  # Convert to integers for drawing
-    cv2.rectangle(resized_frame, (x_min, y_min), (x_max, y_max), (0, 0, 255), 4)  # Red outline
+    # cv2.rectangle(resized_frame, (x_min, y_min), (x_max, y_max), (0, 0, 255), 4)  # Red outline
     current_annotations.append({
                     "x_min": x_min,
                     "y_min": y_min,
@@ -14,7 +14,6 @@ def draw_first_fret_boxes(current_annotations, guitar_notes, resized_frame, max_
                 })
     box_width = x_max - x_min
     three_fret_box_width = x_min + ratio*(box_width) - 15
-
     if(three_fret_box_width) < 640:
         return draw_string_lines(current_annotations, guitar_notes,resized_frame, x_min, three_fret_box_width, y_min, y_max, fret, ratio)
 
@@ -81,7 +80,7 @@ def draw_notes_on_neck(current_annotations, guitar_notes, resized_frame, fret, r
     for i in range(0, ratio):
         note = guitar_notes[string_num ][(fret + i)]
         if note != 0:
-            cv2.circle(resized_frame,((x_max - (i * fret_width)- fret_width)+ (fret_width//2), line_y), 5 , (0, 255, 255), -1)
+            cv2.circle(resized_frame,((x_max - (i * fret_width)- fret_width)+ (fret_width//2), line_y), 8 , (0, 255, 255), -1)
             current_annotations.append({
                     "x_min": (x_max - (i * fret_width)- fret_width)+ (fret_width//2),
                     "line_y": line_y,

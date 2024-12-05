@@ -25,7 +25,7 @@ scales = {
 
 # Webcam settings
 cap = cv2.VideoCapture(0)
-model = YOLO('/Users/jtappen/Projects/cv_project/guitar_neck_detection/runs/detect/train10/weights/last.pt')
+model = YOLO('/Users/jtappen/Projects/cv_project/guitar_neck_detection/runs/detect/train11/weights/last.pt')
 guitar_notes = generate_pentatonic_notes(scales[current_scale])
 
 def video_feed():
@@ -51,8 +51,12 @@ def video_feed():
                     (0, 0, 0), 2)
                 elif annotation["label"] == "note":
                     cv2.circle(resized_frame, (annotation["x_min"], annotation["line_y"]), 5 , (0, 255, 255), -1)
-                elif annotation["label"] == "fret_box":
-                    cv2.rectangle(resized_frame, (annotation["x_min"], annotation["y_min"]), (annotation["x_max"], annotation["y_max"]), (0, 0, 255), 4)  # Red outline
+                elif annotation["label"] == "fretboard":
+                    cv2.rectangle(resized_frame, (annotation["x_min"], annotation["y_min"]), (annotation["x_max"], annotation["y_max"]), color=(0, 255, 0), thickness=4)
+                    
+
+        #         elif annotation["label"] == "fret_box":
+        #             cv2.rectangle(resized_frame, (annotation["x_min"], annotation["y_min"]), (annotation["x_max"], annotation["y_max"]), (0, 0, 255), 4)  # Red outline
         else:
             current_annotations.clear()
             # Perform inference on the resized frame
@@ -69,10 +73,21 @@ def video_feed():
                     x_min, y_min, x_max, y_max = box.xyxy[0].cpu().numpy()
                     cls_idx = int(box.cls.cpu().numpy())
                     label = model.names[cls_idx]  # Get class name
-
                     # Check if the label matches "odd_fret"
                     if label == "odd_fret":
                         odd_fret_boxes.append((x_min, y_min, x_max, y_max))
+                    if label == "fretboard":
+                       current_annotations.append({
+                        "x_min": int(x_min),
+                        "y_min": int(y_min),
+                        "x_max": int(x_max),
+                        "y_max" : int(y_max),
+                        "label": "fretboard"
+                        })
+                       cv2.rectangle(resized_frame, (int(x_min), int(y_min)), (int(x_max), int(y_max)), color=(0, 255, 0), thickness=4)
+
+
+                       
 
             # Sort the boxes by x_max in descending order
             odd_fret_boxes = sorted(odd_fret_boxes, key=lambda box: box[2], reverse=True)
@@ -80,8 +95,8 @@ def video_feed():
                 x_min, y_min, x_max, y_max = map(int, odd_fret_boxes[idx]) 
                 # cv2.rectangle(resized_frame, (x_min, y_min), (x_max, y_max), (0, 255, 0), 2)
                 # Annotate the box with its index (number) beside it
-                text_position = (x_max + 5, y_min + 20)  # Position text slightly to the right of the box
-                cv2.putText(resized_frame, f"{idx + 1}", text_position, cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 2)
+                # text_position = (x_max + 5, y_min + 20)  # Position text slightly to the right of the box
+                # cv2.putText(resized_frame, f"{idx + 1}", text_position, cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 2)
                 curr_box = odd_fret_boxes[idx]
                 if idx == 0 or idx== 4 or idx == 5:
                     resized_frame = draw_first_fret_boxes(current_annotations, guitar_notes, resized_frame, curr_box, 3, idx + 1)
