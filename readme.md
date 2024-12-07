@@ -1,4 +1,4 @@
-# Guitar Neck Detection Program
+# Guitar Scale and Neck Detection Project
 
 ## Overview
 This project is a computer vision program designed to detect the neck of a guitar in real-time from video webcam input. Using techniques such as object detection, the program is capable of identifying and drawing bounding boxes around the guitar neck and overlaying notes in real time onto the neck, making it useful for applications such as learning guitar scales, guitar playing analysis, or general image recognition tasks.
