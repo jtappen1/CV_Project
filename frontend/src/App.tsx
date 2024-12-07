@@ -75,7 +75,7 @@ const App: React.FC = () => {
 
   return (
     <div className="App">
-      <h1>Guitar Neck Note Controller</h1>
+      <h1>Guitar Neck and Scale Display</h1>
       {/* <div className="video-container"> */}
         {/* Embed the video feed */}
         <img
