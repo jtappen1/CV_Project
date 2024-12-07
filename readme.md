@@ -17,6 +17,12 @@ You can install the required dependencies using the following command:
 ```
 pip install -r requirements.txt
 ```
+
+To run the server: 
+```
+python server.py
+```
+
 ### Frontend
 
 Prepare the frontend by running in the frontend directory:
