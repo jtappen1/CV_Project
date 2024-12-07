@@ -4,11 +4,12 @@ import cv2
 from ultralytics import YOLO
 from collections import defaultdict
 from flask_cors import CORS
-from fret_detection import draw_first_fret_boxes, generate_fretboard_notes, get_scale_notes
+from utils.fret_detection import draw_first_fret_boxes, draw_saved_annotations, generate_fretboard_notes, get_scale_notes
 
 
 app = Flask(__name__)
 CORS(app)
+
 guitar_notes = defaultdict(lambda: defaultdict(int))
 current_key = "F"
 current_scale_type = "Major"
@@ -21,7 +22,7 @@ scale_types = ["Major", "Minor", "Minor Pentatonic", "Major Pentatonic"]
 
 # Webcam settings
 cap = cv2.VideoCapture(0)
-model = YOLO('/Users/jtappen/Projects/cv_project/guitar_neck_detection/runs/detect/train12/weights/last.pt')
+model = YOLO('./data/YOLO_neck_detection.pt')
 guitar_notes = generate_fretboard_notes()
 
 def video_feed():
@@ -39,20 +40,7 @@ def video_feed():
         resized_frame = cv2.resize(frame, (640, 640))  # Resize the frame
 
         if saved_annotations:
-            for annotation in current_annotations:
-                if annotation["label"] == "string":
-                    cv2.line(resized_frame, 
-                    (annotation["x_min"], annotation["line_y"]), 
-                    (annotation["x_max"], annotation["line_y"]), 
-                    (0, 0, 0), 2)
-                elif annotation["label"] == "note":
-                    cv2.circle(resized_frame, (annotation["x_min"], annotation["line_y"]), 10, (0, 0, 0), -1)
-                    cv2.circle(resized_frame, (annotation["x_min"], annotation["line_y"]), 9 , (0, 255, 255), -1)
-                    text_position = ( annotation["x_min"]-5, annotation["line_y"] + 5)  # Adjust offsets for centerin
-                    cv2.putText(resized_frame, annotation["string_num"], text_position, cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 2)
-
-                elif annotation["label"] == "fretboard":
-                    cv2.rectangle(resized_frame, (annotation["x_min"], annotation["y_min"]), (annotation["x_max"], annotation["y_max"]), color=(0, 255, 0), thickness=4)
+            resized_frame = draw_saved_annotations(current_annotations)
                     
         else:
             current_annotations.clear()

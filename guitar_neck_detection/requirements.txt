@@ -1,6 +1,0 @@
-torch==2.0.1          # PyTorch for model inference
-torchvision==0.15.2   # Torchvision for pre-trained models and transformations
-opencv-python==4.8.0  # OpenCV for image processing and webcam access
-numpy==1.23.5         # NumPy for numerical operations
-matplotlib==3.6.2     # Optional: for visualizing bounding boxes in images
-ultralytics
