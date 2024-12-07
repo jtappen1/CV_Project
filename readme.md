@@ -29,6 +29,10 @@ Prepare the frontend by running in the frontend directory:
 ```
 npm install
 ```
+To start the frontend: 
+```
+npm run start
+```
 
 ## How It Works
 1. The program processes the input (image or webcam feed) frame by frame.
