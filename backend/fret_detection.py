@@ -13,11 +13,8 @@ def draw_first_fret_boxes(current_scale_notes, current_annotations, guitar_notes
                 })
     box_width = x_max - x_min
     three_fret_box_width = x_min + ratio*(box_width) - 15
-    if(three_fret_box_width) < 640:
-        return draw_string_lines(current_scale_notes, current_annotations, guitar_notes,resized_frame, x_min, three_fret_box_width, y_min, y_max, fret, ratio)
 
-    
-    return resized_frame
+    return draw_string_lines(current_scale_notes, current_annotations, guitar_notes,resized_frame, x_min, three_fret_box_width, y_min, y_max, fret, ratio)
 
 
 def draw_string_lines(current_scale_notes, current_annotations, guitar_notes, resized_frame, x_min, x_max, y_min, y_max, fret, ratio):
@@ -100,11 +97,18 @@ def draw_notes_on_neck(current_scale_notes, current_annotations, guitar_notes, r
     for i in range(0, ratio):
         note = guitar_notes[string_num ][(fret + i)]
         if note in current_scale_notes:
-            cv2.circle(resized_frame,((x_max - (i * fret_width)- fret_width)+ (fret_width//2), line_y), 8 , (0, 255, 255), -1)
+            cv2.circle(resized_frame,((x_max - (i * fret_width)- fret_width)+ (fret_width//2), line_y), 10 , (0, 0, 0), -1)
+            cv2.circle(resized_frame,((x_max - (i * fret_width)- fret_width)+ (fret_width//2), line_y), 9 , (0, 255, 255), -1)
+            text_position = ((x_max - (i * fret_width)- fret_width)+ (fret_width//2) - 5, line_y + 5)  # Adjust offsets for centerin
+            # Add the text inside the circle
+            cv2.putText(resized_frame, str(string_num + 1), text_position, cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 2)
+
+
             current_annotations.append({
                     "x_min": (x_max - (i * fret_width)- fret_width)+ (fret_width//2),
                     "line_y": line_y,
                     "x_max": x_max,
+                    "string_num" : str(string_num + 1),
                     "label": "note"
                 })
 

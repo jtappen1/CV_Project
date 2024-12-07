@@ -6,13 +6,13 @@ import yaml
 def main():
 
     model = YOLO('yolov8n.pt')
-    yaml_path = "/Users/jtappen/Projects/cv_project/guitar_neck_detection/data/batch_final/data.yaml"
+    yaml_path = "/Users/jtappen/Projects/cv_project/guitar_neck_detection/data/batch_close/data.yaml"
     
     print("Starting Training...")
 
     model.train(
         data=yaml_path,  # Path to your data.yaml
-        epochs=15,  # Number of epochs to train
+        epochs=20,  # Number of epochs to train
         imgsz=640,  # Image size (640 is common, can be adjusted)
         batch=3,  # Batch size (adjust based on your GPU memory)
         device='cpu',  # Use the GPU (0 is typically the first GPU)
